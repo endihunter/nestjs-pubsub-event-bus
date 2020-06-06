@@ -1,0 +1,15 @@
+{
+    "//": "read https://github.com/istanbuljs/nyc#configuring-nyc",
+    "check-coverage": false,
+    "per-file": true,
+    "lines": 100,
+    "statements": 100,
+    "functions": 100,
+    "branches": 100,
+    "extension": [".ts"],
+    "exclude": ["**/*.d.ts", "**/interface/index.ts", "**/*.interface.ts", "**/*.interfaces.ts", "src/extra/shim", "**/*gen-dto.ts"],
+    "include": ["src/**/*?(.*).ts"],
+    "reporter": ["html", "lcov", "text", "text-summary"],
+    "report-dir": "test-reports",
+    "all": true
+}
