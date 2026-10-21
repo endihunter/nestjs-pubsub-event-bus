@@ -200,7 +200,7 @@ This library requires consumers to install:
 - `@nestjs/common` (^11.0.0 || ^12.0.0)
 - `@nestjs/core` (^11.0.0 || ^12.0.0)
 - `@nestjs/cqrs` (^11.0.0 || ^12.0.0)
-- `amqp-connection-manager` (^4.0.0)
+- `amqp-connection-manager` (^4.1.8)
 - `amqplib` (>=0.10.7) - **Version 7.0.0+ requires 0.10.7+** for RabbitMQ 4 compatibility
 - `reflect-metadata` (>=0.1.13)
 
