@@ -64,7 +64,7 @@
         "version:prerelease": "ts-node -T bin/npm-dev-version.ts",
         "publish": "npm run build:dist && ts-node -T bin/prepublish.ts && npm publish ./dist",
         "publish:dev": "npm run version:prerelease && npm run publish -- --tag dev",
-        "publish:dev:dry": "npm run publish -- --dry-run"
+        "publish:dev:dry": "npm run publish -- --dry-run --tag dev"
     },
     "peerDependencies": {
         "@nestjs/common": "^10.0.0 || ^11.0.0",
