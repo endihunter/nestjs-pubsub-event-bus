@@ -28,8 +28,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18, 20, 22]
-        nestjs-version: [10, 11]
+        node-version: [20, 22, 24]
+        nestjs-version: [11, 12]
         rabbitmq-version: ['3.13.3', '4.1.0']
 
     env:
@@ -76,14 +76,21 @@ jobs:
       - name: Dry run of publishing
         run: npm run publish:dev:dry
 
+      - name: Smoke test CommonJS build
+        run: node -e "require('./dist')"
+
       - name: Lint code
         run: npm run lint
 
+      # Jest loads ESM-only NestJS 12 natively only on Node 24.9+ with --experimental-vm-modules
       - name: Run tests
+        if: matrix.nestjs-version != 12 || matrix.node-version >= 24
+        env:
+          NODE_OPTIONS: --experimental-vm-modules
         run: npm run coverage
 
       - name: Run Coveralls
         uses: coverallsapp/github-action@master
-        if: matrix.node-version == 18 && matrix.nestjs-version == 11 && matrix.rabbitmq-version == '4.1.0'
+        if: matrix.node-version == 24 && matrix.nestjs-version == 12 && matrix.rabbitmq-version == '4.1.0'
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}

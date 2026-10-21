@@ -48,11 +48,13 @@ This library supports **both RabbitMQ 3.13.x and 4.x**:
 
 ### Upgrading to v7.0.0
 
-Version 7.0.0 adds RabbitMQ 4.x support while maintaining backward compatibility with RabbitMQ 3.13.
+Version 7.0.0 adds RabbitMQ 4.x and NestJS 12 support while maintaining backward compatibility with RabbitMQ 3.13. It drops NestJS 10 and Node.js 18.
 
 **Required Steps:**
 
 ```bash
+# 0. Make sure you run Node.js 20+ and NestJS 11+
+
 # 1. Upgrade amqplib to 0.10.7+
 npm install amqplib@^0.10.9
 
@@ -73,10 +75,12 @@ When using RabbitMQ 4:
 
 ### NestJS Versions
 
-| Library Version | NestJS 10 | NestJS 11 |
-| --------------- | --------- | --------- |
-| 5.x             | ✅        | ✅        |
-| 7.x             | ✅        | ✅        |
+| Library Version | NestJS 10 | NestJS 11 | NestJS 12 | Node.js |
+| --------------- | --------- | --------- | --------- | ------- |
+| 5.x             | ✅        | ✅        | ❌        | >= 16   |
+| 7.x             | ❌        | ✅        | ✅        | >= 20   |
+
+NestJS 12 is ESM-only and requires Node.js `^20.19.0 || >=22.12.0`, where `require()` of ES modules is supported natively.
 
 ## [Import module](#table-of-contents)
 

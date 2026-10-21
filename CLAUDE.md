@@ -12,7 +12,7 @@ This is `@goparrot/pubsub-event-bus` - a NestJS CQRS extension that adds RabbitM
 - Event consumption with automatic message handling
 - Retry mechanism with two strategies (Dead Letter TTL and Delayed Message Exchange)
 - Multiple acknowledge modes for message handling
-- Support for NestJS 10 and 11
+- Support for NestJS 11 and 12 (Node.js 20+)
 - Support for RabbitMQ 3.13.x and 4.x (dual compatibility)
 
 ## Development Commands
@@ -174,6 +174,8 @@ This allows unit testing without RabbitMQ infrastructure.
 2. Filtering for handlers decorated with `@PubsubEventHandler`
 3. Extracting metadata to determine which events each handler listens to
 
+It also implements `explore()` for standard command/query/event/saga handlers instead of extending `@nestjs/cqrs` internals, which NestJS 12 no longer exposes via its `exports` map.
+
 ### Message Routing Pattern Matching
 
 When a message arrives, `PubSubEventBinder` matches it to handler event classes via:
@@ -195,9 +197,9 @@ When a message arrives, `PubSubEventBinder` matches it to handler event classes 
 
 This library requires consumers to install:
 
-- `@nestjs/common` (^10.0.0 || ^11.0.0)
-- `@nestjs/core` (^10.0.0 || ^11.0.0)
-- `@nestjs/cqrs` (^10.0.0 || ^11.0.0)
+- `@nestjs/common` (^11.0.0 || ^12.0.0)
+- `@nestjs/core` (^11.0.0 || ^12.0.0)
+- `@nestjs/cqrs` (^11.0.0 || ^12.0.0)
 - `amqp-connection-manager` (^4.0.0)
 - `amqplib` (>=0.10.7) - **Version 7.0.0+ requires 0.10.7+** for RabbitMQ 4 compatibility
 - `reflect-metadata` (>=0.1.13)
@@ -237,10 +239,12 @@ The library **explicitly configures queue types**, so the default queue type cha
 
 The CI/CD pipeline tests against **both** RabbitMQ 3.13 and 4.1 in a matrix configuration:
 
-- 3 Node.js versions (18, 20, 22)
-- 2 NestJS versions (10, 11)
+- 3 Node.js versions (20, 22, 24)
+- 2 NestJS versions (11, 12)
 - 2 RabbitMQ versions (3.13.3, 4.1.0)
-- Total: 12 test combinations per build
+- Total: 12 combinations per build
+
+NestJS 12 is ESM-only. Jest loads it natively only on Node.js 24.9+ with `--experimental-vm-modules` (set via `NODE_OPTIONS` in CI), so NestJS 12 jobs on Node.js 20/22 run typecheck, lint, build and a CommonJS `require()` smoke test, but skip Jest.
 
 This ensures dual compatibility is maintained.
 
