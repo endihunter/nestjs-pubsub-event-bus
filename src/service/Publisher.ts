@@ -1,22 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import type { IEvent } from '@nestjs/cqrs';
-import { DefaultPubSub } from '@nestjs/cqrs/dist/helpers/default-pubsub';
+import type { IEvent, IEventPublisher } from '@nestjs/cqrs';
 import { Subject } from 'rxjs';
 import { AbstractPubsubEvent } from '../interface';
 import { Producer } from './Producer';
 
 @Injectable()
-export class Publisher<EventBase extends IEvent = IEvent> extends DefaultPubSub<EventBase> {
+export class Publisher<EventBase extends IEvent = IEvent> implements IEventPublisher<EventBase> {
     constructor(
-        subject$: Subject<EventBase>,
+        private readonly subject$: Subject<EventBase>,
         private readonly producer: Producer,
-    ) {
-        super(subject$);
-    }
+    ) {}
 
     async publish<T extends EventBase>(event: T): Promise<void> {
         if (event instanceof AbstractPubsubEvent) {
-            event.localEventEnabled() && super.publish(event);
+            event.localEventEnabled() && this.publishLocally(event);
             return this.producer.produce(event);
         }
 
@@ -24,6 +21,6 @@ export class Publisher<EventBase extends IEvent = IEvent> extends DefaultPubSub<
     }
 
     publishLocally<T extends EventBase>(event: T): void {
-        return super.publish(event);
+        this.subject$.next(event);
     }
 }

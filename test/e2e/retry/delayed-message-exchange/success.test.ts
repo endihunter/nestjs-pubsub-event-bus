@@ -12,6 +12,7 @@ describe('Retry Scenarios (Delayed message exchange)', () => {
     let eventBus: EventBus;
     let testHandler: TestHandler;
     let latch: CountDownLatch;
+    let handledAt: number[];
 
     @PubsubEvent({ exchange: faker.string.uuid() })
     class TestEvent extends AbstractPubsubEvent<Record<string, unknown>> {}
@@ -27,6 +28,7 @@ describe('Retry Scenarios (Delayed message exchange)', () => {
     })
     class TestHandler extends AbstractPubsubHandler<TestEvent> {
         async handle(event: TestEvent): Promise<void> {
+            handledAt.push(Date.now());
             latch.countDown();
             if (event.retryCount < maxRetryAttempts) {
                 throw new Error(`Failed on ${event.retryCount} attempt`);
@@ -53,6 +55,7 @@ describe('Retry Scenarios (Delayed message exchange)', () => {
     beforeEach(() => {
         // initial consume + 3 retries
         latch = new CountDownLatch(maxRetryAttempts + 1);
+        handledAt = [];
     });
 
     afterEach(async () => {
@@ -86,6 +89,11 @@ describe('Retry Scenarios (Delayed message exchange)', () => {
                     retryCount: retryAttempt,
                 }),
             );
+        });
+
+        // Each retry waits for its delay; delays below 128 ms used to be ignored by the plugin
+        _.times(maxRetryAttempts, (attempt: number) => {
+            expect(handledAt[attempt + 1] - handledAt[attempt]).toBeGreaterThanOrEqual(delayFactory(attempt + 1) * 0.8);
         });
     });
 });
