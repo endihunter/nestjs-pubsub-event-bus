@@ -1,7 +1,7 @@
 {
     "name": "@goparrot/pubsub-event-bus",
     "description": "NestJS EventBus extension for RabbitMQ PubSub",
-    "version": "7.0.0-dev.1",
+    "version": "7.0.0-nestjs-12.0",
     "author": "GoParrot",
     "keywords": [
         "NestJS",
